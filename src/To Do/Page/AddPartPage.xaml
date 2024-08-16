@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<mct:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+           xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+           xmlns:mct="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui"
+           xmlns:cmt="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
+           xmlns:ndtp="clr-namespace:Maui.NullableDateTimePicker;assembly=Maui.NullableDateTimePicker"
+           xmlns:mr="clr-namespace:MR.Gestures;assembly=MR.Gestures"
+           xmlns:local="clr-namespace:To_Do.Services.Helpers"
+           x:Name="myPopup"
+           x:Class="To_Do.Page.AddPartPage"
+           xmlns:viewmodel="clr-namespace:To_Do.ViewModels"
+           VerticalOptions="End" HorizontalOptions="Fill"
+           x:DataType="viewmodel:AddPartViewModel">
+    <Grid RowDefinitions="Auto" ColumnDefinitions="Auto, *,30,2,70" ColumnSpacing="2" 
+          VerticalOptions="EndAndExpand" HorizontalOptions="FillAndExpand" BackgroundColor="#344955">
+        <CheckBox x:Name="myCheckBox" Color="#bc8a5f" Grid.Column="0" WidthRequest="30" Margin="12,0,0,0" 
+                  IsChecked="{Binding IsChecked}"/>
+        <Editor Grid.Column="1" x:Name="TaskEditor"
+                Focused="TaskEditor_Focused"
+            Text="{Binding Task}"
+            Keyboard="Chat"
+            TextColor="#DCD7C9"
+            VerticalOptions="Center"
+            VerticalTextAlignment="End"
+            Placeholder="Add a task"
+            PlaceholderColor="Grey"
+            FontSize="17"
+            AutoSize="TextChanges"
+            Margin="10"
+            IsTextPredictionEnabled="True"
+            MaxLength="255"/>
+
+        <Image Grid.Column="2" Source="calendar" WidthRequest="20">
+            <Image.Behaviors>
+                <cmt:IconTintColorBehavior TintColor="#DCD7C9"/>
+            </Image.Behaviors>
+            <Image.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding DateSelectedCommand}"/>
+            </Image.GestureRecognizers>
+        </Image>
+        <BoxView Grid.Column="3" WidthRequest="1" HorizontalOptions="StartAndExpand" HeightRequest="30" BackgroundColor="#DCD7C9" Margin="5,0,0,0"/>
+        <Button Command="{Binding AddTodoCommand}" CommandParameter="{Binding Source={x:Reference Name =myPopup}}"
+                Grid.Column="4" Text="Save" TextColor="#DCD7C9" Padding="0" BackgroundColor="Transparent"/>
+
+    </Grid>
+
+</mct:Popup>

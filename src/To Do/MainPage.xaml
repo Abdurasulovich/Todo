@@ -1,0 +1,325 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="To_Do.MainPage"
+             xmlns:viewmodel="clr-namespace:To_Do.ViewModels"
+             xmlns:type="clr-namespace:To_Do.ViewModels.Models"
+             xmlns:mct="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
+             xmlns:ndtp="clr-namespace:Maui.NullableDateTimePicker;assembly=Maui.NullableDateTimePicker"
+             xmlns:mr="clr-namespace:MR.Gestures;assembly=MR.Gestures"
+             xmlns:local="clr-namespace:To_Do.Services.Helpers"
+             x:DataType="viewmodel:MainViewModel">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <local:DateToColorConverter x:Key="DateToColorConverter"/>
+            <local:StarImageConverter x:Key="Starimage"/>
+            <local:BoolToNoteVisible x:Key="NoteVisible"/>
+            <local:DateToVisibilityConverter x:Key="DateToVisibilityConverter"/>
+            <local:LabelVisibilityConverter x:Key="LabelVisibilityConverter" />
+            <local:LabelDecorationConverter x:Key="LabelDecConver"/>
+            <local:CalendarImageConverter x:Key="CalendarImageConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <Page.Behaviors>
+        <mct:StatusBarBehavior StatusBarColor="Black" StatusBarStyle="Default"/>
+    </Page.Behaviors>
+    <AbsoluteLayout>
+        <Image Source="bgmoon"
+               Aspect="AspectFill"
+               VerticalOptions="FillAndExpand"
+               HorizontalOptions="FillAndExpand"
+               AbsoluteLayout.LayoutBounds="0,0,1,1"
+               AbsoluteLayout.LayoutFlags="All"/>
+        <Grid RowDefinitions="80, *, Auto" AbsoluteLayout.LayoutFlags="All"
+              AbsoluteLayout.LayoutBounds="0,0,1,1">
+
+            <Image Grid.Row="0" Source="logg">
+                <Image.Behaviors>
+                    <mct:IconTintColorBehavior TintColor="#bc8a5f"/>
+                </Image.Behaviors>
+            </Image>
+
+            <RefreshView Grid.Row="1" IsRefreshing="{Binding IsRefreshing}"
+                         Command="{Binding RefreshCommand}">
+                
+            <ScrollView  Orientation="Vertical" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" VerticalScrollBarVisibility="Never">
+                <Grid RowDefinitions="Auto, 50, Auto" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                    <CollectionView Grid.Row="0" EmptyView="Here is no tasks yet" ItemsSource="{Binding ListTodo}" HorizontalOptions="FillAndExpand" SelectionMode="None">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="type:TodoViewModel">
+                                    <SwipeView>
+                                        <SwipeView.RightItems>
+                                            <SwipeItems Mode="Execute" SwipeBehaviorOnInvoked="Auto">
+                                                <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:MainViewModel}}, Path=DeleteCommand}"
+                                                               CommandParameter="{Binding .}">
+                                                    <Frame Padding="10" Opacity="0.9"
+                                                    BackgroundColor="#ce4257" BorderColor="Transparent"
+                                                           CornerRadius="10">
+                                                        <Grid Padding="20,0"
+                                                          WidthRequest="400">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                            </Grid.ColumnDefinitions>
+
+                                                            <Grid Grid.Column="1" RowDefinitions="*, 15">
+                                                                <Image Source="white_del.png"
+                                                                    VerticalOptions="Center"
+                                                                    HorizontalOptions="Center"
+                                                                    WidthRequest="24"
+                                                                    HeightRequest="24"
+                                                                    Grid.Row="0">
+                                                                    <Image.Behaviors>
+                                                                        <mct:IconTintColorBehavior TintColor="#DCD7C9"/>
+                                                                    </Image.Behaviors>
+                                                                </Image>
+                                                                <Label Grid.Row="1" HorizontalOptions="CenterAndExpand" Text="Delete" FontAttributes="Bold"
+                                                                       FontSize="13" VerticalOptions="Start"
+                                                                       TextColor="#DCD7C9"/>
+                                                            </Grid>
+                                                        </Grid>
+                                                    </Frame>
+                                                </SwipeItemView>
+                                                <!--<SwipeItem Text="Delete"
+                                                    IconImageSource="delete.png"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:MainViewModel}}, Path=DeleteCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                           BackgroundColor="#EE4E4E">
+                                                </SwipeItem>-->
+                                            </SwipeItems>
+                                        </SwipeView.RightItems>
+                                        <SwipeView.LeftItems>
+                                            <SwipeItems Mode="Execute" SwipeBehaviorOnInvoked="Auto">
+                                                <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:MainViewModel}}, Path=SelectedTabCommand}"
+                                                                CommandParameter="{Binding .}">
+                                                    <Frame Padding="10"
+                                                           BackgroundColor="#bc8a5f" Opacity="0.9" BorderColor="Transparent"
+                                                           CornerRadius="10">
+                                                        <Grid Padding="20,0"
+                                                              WidthRequest="400">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="*" />
+                                                            </Grid.ColumnDefinitions>
+
+                                                            <Grid Grid.Column="0" RowDefinitions="*, 15">
+                                                                <Image Source="pencil.png"
+                                                                    VerticalOptions="Center"
+                                                                    HorizontalOptions="Center"
+                                                                    WidthRequest="24"
+                                                                    HeightRequest="24"
+                                                                    Grid.Row="0">
+                                                                    <Image.Behaviors>
+                                                                        <mct:IconTintColorBehavior TintColor="#DCD7C9"/>
+                                                                    </Image.Behaviors>
+                                                                </Image>
+                                                                <Label Grid.Row="1" HorizontalOptions="CenterAndExpand" Text="Edit" FontAttributes="Bold"
+                                                                        FontSize="13" VerticalOptions="Start"
+                                                                        TextColor="#DCD7C9"/>
+                                                            </Grid>
+                                                        </Grid>
+                                                    </Frame>
+                                                </SwipeItemView>
+                                                <!--<SwipeItem Text="Delete"
+            IconImageSource="delete.png"
+            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:MainViewModel}}, Path=DeleteCommand}"
+            CommandParameter="{Binding .}"
+                   BackgroundColor="#EE4E4E">
+        </SwipeItem>-->
+                                            </SwipeItems>
+                                        </SwipeView.LeftItems>
+
+                                        <Frame HorizontalOptions="FillAndExpand" CornerRadius="10" Background="#344955" Opacity="0.9"
+                                                Margin="6,1" Padding="5" MinimumHeightRequest="70" BorderColor="#344955">
+                                    <Frame.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:MainViewModel}}, Path=SelectedTabCommand}"
+                                                          CommandParameter="{Binding .}"/>
+                                    </Frame.GestureRecognizers>
+                                    <Grid ColumnDefinitions="45,*,45" BackgroundColor="Transparent">
+                                        <CheckBox Scale="1.3" Grid.Column="0" IsEnabled="False" Margin="0" BackgroundColor="Transparent" 
+                                              IsChecked="{Binding IsDone}" Color="#bc8a5f"/>
+                                        <Frame Grid.Column="0" Padding="0" BackgroundColor="Transparent" BorderColor="Transparent">
+                                            <Frame.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:MainViewModel}}, Path=DoneCommand}"
+                                                                      CommandParameter="{Binding .}"/>
+                                            </Frame.GestureRecognizers>
+                                        </Frame>
+                                        <Grid Grid.Column="1" RowDefinitions="*, Auto" BackgroundColor="Transparent">
+                                            <Label Grid.Row="0" TextColor="#DCD7C9"
+                                                   Text="{Binding Name}" VerticalTextAlignment="Center" FontSize="19" FontAttributes="Bold"
+                                                   TextDecorations="{Binding IsDone, Converter={StaticResource LabelDecConver}}"/>
+
+                                            <Grid Grid.Row="1" ColumnDefinitions="Auto, Auto" ColumnSpacing="0">
+                                                <HorizontalStackLayout Grid.Column="0" Spacing="3" HorizontalOptions="FillAndExpand" IsVisible="{Binding DueDate, Converter={StaticResource DateToVisibilityConverter}}">
+                                                    <Image Source="{Binding DueDate, Converter={StaticResource CalendarImageConverter}}" HeightRequest="11" WidthRequest="11">
+                                                        <Image.Behaviors>
+                                                            <mct:IconTintColorBehavior TintColor="{Binding DueDate, Converter={StaticResource DateToColorConverter}}"/>
+                                                        </Image.Behaviors>
+                                                    </Image>
+
+                                                    <Label Text="{Binding DueDate, StringFormat='{}{0:ddd, MMM d, yyyy}'}" Margin="5,0,0,0"
+                                                        FontSize="11" FontAttributes="Bold" VerticalTextAlignment="Center"
+                                                           TextColor="{Binding DueDate, Converter={StaticResource DateToColorConverter}}"/>
+
+
+                                                    <Label TextColor="#DCD7C9" Text="•" FontSize="12" Margin="3,0" VerticalTextAlignment="Center">
+                                                        <Label.IsVisible>
+                                                            <MultiBinding Converter="{StaticResource LabelVisibilityConverter}">
+                                                                <Binding Path="AddNote"/>
+                                                                <Binding Path="DueDate"/>
+                                                            </MultiBinding>
+                                                        </Label.IsVisible>
+                                                    </Label>
+
+                                                </HorizontalStackLayout>
+
+                                                <HorizontalStackLayout Grid.Column="1" Spacing="5">
+                                                    <Image Source="note" IsVisible="{Binding AddNote, Converter={StaticResource NoteVisible}}" HeightRequest="11" WidthRequest="11">
+                                                        <Image.Behaviors>
+                                                            <mct:IconTintColorBehavior TintColor="#DCD7C9"/>
+                                                        </Image.Behaviors>
+                                                    </Image>
+                                                </HorizontalStackLayout>
+
+                                            </Grid>
+                                        </Grid>
+
+                                        <Border Grid.Column="2" StrokeThickness="0" BackgroundColor="#344955">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:MainViewModel}}, Path=ImportantCommand}" CommandParameter="{Binding .}"/>
+                                            </Border.GestureRecognizers>
+                                            <ImageButton Grid.Column="2" Scale="1.3" Source="{Binding IsImportant, Converter={StaticResource Starimage}}" 
+                                                 HeightRequest="20" WidthRequest="20" BackgroundColor="Transparent"
+                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:MainViewModel}}, Path=ImportantCommand}"
+                                                 CommandParameter="{Binding .}"/>
+                                        </Border>
+                                    </Grid>
+                                </Frame>
+                                    </SwipeView>
+                                </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <!--<Border Grid.Row="1" IsVisible="{Binding IsComplatedButtonVisible}" Opacity="0.8" HeightRequest="40" StrokeThickness="0" Margin="10" StrokeShape="RoundRectangle 10,10,10,10" HorizontalOptions="StartAndExpand">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding DropDownCommand}"/>
+                        </Border.GestureRecognizers>
+                        <Grid ColumnDefinitions="Auto, 30" BackgroundColor="#344955">
+                            <Label Grid.Column="0" Text="Complated" Margin="5,0,0,0" TextColor="#DCD7C9" VerticalTextAlignment="Center"/>
+                            <Image Grid.Column="1" Source="down" HeightRequest="10" WidthRequest="15">
+                                <Image.Behaviors>
+                                    <mct:IconTintColorBehavior TintColor="#DCD7C9"/>
+                                </Image.Behaviors>
+                            </Image>
+                        </Grid>
+                    </Border>-->
+
+                    <!--<CollectionView IsVisible="{Binding IsDoneDown}" Grid.Row="2" ItemsSource="{Binding ListDoneTodo}" HorizontalOptions="FillAndExpand" SelectionMode="None">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="type:TodoViewModel">
+                                <Frame HorizontalOptions="FillAndExpand" CornerRadius="10" Background="#344955" Opacity="0.9"
+                                        Margin="5,2" Padding="5" MinimumHeightRequest="60" BorderColor="Transparent">
+                                    <Frame.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:MainViewModel}}, Path=SelectedTabCommand}"
+                                  CommandParameter="{Binding .}"/>
+                                    </Frame.GestureRecognizers>
+                                    <Grid ColumnDefinitions="45,*,45" BackgroundColor="Transparent">
+                                        <CheckBox Grid.Column="0" IsEnabled="False" Margin="0" BackgroundColor="Transparent" 
+                                                    IsChecked="{Binding IsDone}" Color="#A27B5C"/>
+                                        <Frame Grid.Column="0" Padding="0" BackgroundColor="Transparent" BorderColor="Transparent">
+                                            <Frame.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:MainViewModel}}, Path=DoneCommand}"
+                                              CommandParameter="{Binding .}"/>
+                                            </Frame.GestureRecognizers>
+                                        </Frame>
+
+                                        <Grid Grid.Column="1" RowDefinitions="*, Auto" BackgroundColor="Transparent">
+                                            <Label Grid.Row="0" TextColor="#DCD7C9" TextDecorations="Strikethrough"
+                                                    Text="{Binding Name}" VerticalTextAlignment="Center" FontSize="18" FontAttributes="Bold"/>
+
+                                            <Grid Grid.Row="1" ColumnDefinitions="Auto, Auto, Auto" ColumnSpacing="3" VerticalOptions="End">
+                                                <HorizontalStackLayout Grid.Column="1" Spacing="3" HorizontalOptions="FillAndExpand">
+                                                    <Image Source="calendar" HeightRequest="10" WidthRequest="10" IsVisible="{Binding DueDate, Converter={StaticResource DateToVisibilityConverter}}">
+                                                        <Image.Behaviors>
+                                                            <mct:IconTintColorBehavior TintColor="{Binding DueDate, Converter={StaticResource DateToColorConverter}}"/>
+                                                        </Image.Behaviors>
+                                                    </Image>
+
+                                                    <Label Text="{Binding DueDate, StringFormat='{}{0:ddd, MMM d, yyyy}'}" Margin="5,0,0,0"
+                                                            FontSize="10" FontAttributes="Bold" VerticalTextAlignment="Center" IsVisible="{Binding DueDate, Converter={StaticResource DateToVisibilityConverter}}"
+                                                            TextColor="{Binding DueDate, Converter={StaticResource DateToColorConverter}}"/>
+
+
+                                                    <Label TextColor="#DCD7C9" Text="•" FontSize="10" Margin="2,0" VerticalTextAlignment="Center">
+                                                        <Label.IsVisible>
+                                                            <MultiBinding Converter="{StaticResource LabelVisibilityConverter}">
+                                                                <Binding Path="AddNote"/>
+                                                                <Binding Path="DueDate"/>
+                                                            </MultiBinding>
+                                                        </Label.IsVisible>
+                                                    </Label>
+
+                                                </HorizontalStackLayout>
+
+                                                <HorizontalStackLayout Grid.Column="2" Spacing="5">
+                                                    <Image Source="note" IsVisible="{Binding AddNote, Converter={StaticResource NoteVisible}}" HeightRequest="10" WidthRequest="10">
+                                                        <Image.Behaviors>
+                                                            <mct:IconTintColorBehavior TintColor="#DCD7C9"/>
+                                                        </Image.Behaviors>
+                                                    </Image>
+                                                </HorizontalStackLayout>
+
+                                            </Grid>
+                                        </Grid>
+
+                                        <Border Grid.Column="2" StrokeThickness="0" BackgroundColor="#344955">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:MainViewModel}}, Path=ImportantCommand}" CommandParameter="{Binding .}"/>
+                                            </Border.GestureRecognizers>
+                                            <ImageButton Grid.Column="2" Source="{Binding IsImportant, Converter={StaticResource Starimage}}" 
+                                                        HeightRequest="20" WidthRequest="20" BackgroundColor="Transparent"
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:MainViewModel}}, Path=ImportantCommand}"
+                                                        CommandParameter="{Binding .}"/>
+                                        </Border>
+                                    </Grid>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView-->
+                </Grid>
+            </ScrollView>
+            </RefreshView>
+
+            <!--<content:AddPart Grid.Row="3">
+                <content:AddPart.Shadow>
+                    <Shadow Brush="Black" Opacity="0.8" Offset="5,-20" Radius="60"/>
+                </content:AddPart.Shadow>
+            </content:AddPart>-->
+
+
+        </Grid>
+        <mr:Frame IsVisible="{Binding AddButtonVisible}" TappedCommand="{Binding AddButtonCommand}" AbsoluteLayout.LayoutBounds="0,0,1,1" BackgroundColor="#bc8a5f" AbsoluteLayout.LayoutFlags="All" 
+               HeightRequest="60" WidthRequest="60" VerticalOptions="EndAndExpand" HorizontalOptions="EndAndExpand" Margin="0,0,30,30" CornerRadius="15">
+                <Frame.Shadow>
+                    <Shadow Brush="Black"
+                            Opacity="0.8"
+                            Offset="10,10"
+                            Radius="10"/>
+                </Frame.Shadow>
+                <Image IsVisible="True" Source="plus" HeightRequest="30"/>
+            </mr:Frame>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+
+
+
+    </AbsoluteLayout>
+
+</ContentPage>
